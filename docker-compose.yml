@@ -1,0 +1,113 @@
+version: '3.8'
+services:
+
+  eureka-server:
+    image: service-discovery
+    container_name: service-discovery-container
+    environment:
+        - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka
+        - eureka.instance.hostname=eureka-server
+    build:
+      context: ./ServiceDiscoveryApp
+      dockerfile: ./Dockerfile
+    ports:
+      - 8761:8761
+    volumes:
+      - /opt/docker/discoverylog:/app/discoverylog
+    networks:
+      - backendnetwork
+
+  employee-service:
+    image: employee-service
+    container_name: employee-service-container
+    environment:
+      - DATABASE_HOST=employee
+      - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka
+    build:
+      context: ./EmployeeServiceApp
+      dockerfile: ./Dockerfile
+   # restart: on-failure
+    depends_on:
+      - employee
+      - eureka-server  
+    ports:
+      - 8080:8080
+    networks:
+      - backendnetwork    
+  
+  login-service:
+    image: login-service
+    container_name: login-service-container
+    build:
+      context: ./LoginServiceApp
+      dockerfile: ./Dockerfile
+   # restart: on-failure
+    environment:
+      - DATABASE_HOST=login
+      - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka
+    depends_on:
+      - login
+      - eureka-server  
+    ports:
+      - 8090:8090
+    networks:
+      - backendnetwork    
+
+  apigateway-service:
+    image: apigateway-service
+    container_name: apigateway-service-container
+    environment:
+        - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka
+    build:
+      context: ./ApiGatewayApp
+      dockerfile: ./Dockerfile
+    #restart: on-failure
+    depends_on:
+      - login-service       
+      - employee-service      
+      - eureka-server
+      
+    ports:
+      - 8083:8083
+    networks:
+      - backendnetwork
+      
+  employee:
+    build: ./EmployeeDB
+    container_name: employeecontainer
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: EmployeeDB
+      MYSQL_USER: priyanka
+      MYSQL_PASSWORD: secret    
+    ports:
+      - 3306:3306
+    networks:
+      - backendnetwork
+    volumes:
+      - employeedbdata:/var/lib/mysql
+     
+  login:
+    build: ./LoginDB
+    container_name: logincontainer
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: LoginDB
+      MYSQL_USER: priyanka
+      MYSQL_PASSWORD: secret      
+    ports:
+      - 3307:3306
+    networks:
+      - backendnetwork
+    volumes:
+      - logindbdata:/var/lib/mysql
+              
+volumes:
+  employeedbdata :
+  logindbdata :
+
+networks:
+   frontendnetwork: 
+    driver: bridge
+   backendnetwork:
+    driver: bridge  
