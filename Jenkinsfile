@@ -43,11 +43,11 @@ pipeline {
     post {
         success {
             // Notify or perform additional actions on success
-            "Docker images pushed succesfully to DockerHub"
+          //  "Docker images pushed succesfully to DockerHub"
         }
         failure {
             // Notify or handle failures
-             "Failed pushing Docker images to DockerHub"
+           //  "Failed pushing Docker images to DockerHub"
 
         }
     }
