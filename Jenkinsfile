@@ -35,9 +35,7 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 // Run the Docker container
-                sh 'docker run -d -p 3306:3306 employee-service:priyankadevaraj
-/
-jenkins-employee-service'
+                sh 'docker run -d -p 3306:3306 employee-service:priyankadevaraj/jenkins-employee-service'
             }
         }
     }
