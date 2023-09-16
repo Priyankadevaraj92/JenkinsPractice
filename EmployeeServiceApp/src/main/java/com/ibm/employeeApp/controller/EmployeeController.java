@@ -41,7 +41,7 @@ public class EmployeeController {
 		
 		} catch (EmployeeException empEx) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(new EmployeeResponse(HttpStatus.CONFLICT.value(),
-					"Employee already exists in the system", empEx.getMessage()));
+					"Employee already exists", empEx.getMessage()));
 		}
 
 	}
