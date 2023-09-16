@@ -23,9 +23,7 @@ pipeline {
                 // Build a Docker image for your Spring Boot app
                 script {
                   //  def image = docker.build('your-image-name:your-tag', '.')
-                  def image = docker.build('employee-service:priyankadevaraj
-/
-jenkins-employee-service', '.')
+                  def image = docker.build('employee-service:priyankadevaraj/jenkins-employee-service', '.')
                 //    docker tag employee-service priyankadevaraj/fscc-employee-service
                     image.inside {
                         sh 'echo "Running inside Docker container"'
