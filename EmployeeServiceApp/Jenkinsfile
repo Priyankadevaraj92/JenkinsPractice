@@ -23,9 +23,7 @@ pipeline {
                 // Build a Docker image for your Spring Boot app
                 script {
                   //  def image = docker.build('your-image-name:your-tag', '.')
-                  def image = docker.build('employee-service:priyankadevaraj
-/
-jenkins-employee-service', '.')
+                  def image = docker.build('employee-service:priyankadevaraj/jenkins-employee-service', '.')
                 //    docker tag employee-service priyankadevaraj/fscc-employee-service
                     image.inside {
                         sh 'echo "Running inside Docker container"'
@@ -37,9 +35,7 @@ jenkins-employee-service', '.')
         stage('Run Docker Container') {
             steps {
                 // Run the Docker container
-                sh 'docker run -d -p 3306:3306 employee-service:priyankadevaraj
-/
-jenkins-employee-service'
+                sh 'docker run -d -p 3306:3306 employee-service:priyankadevaraj/jenkins-employee-service'
             }
         }
     }
@@ -47,11 +43,13 @@ jenkins-employee-service'
     post {
         success {
             // Notify or perform additional actions on success
-            "Docker images pushed succesfully to DockerHub"
+          //  "Docker images pushed succesfully to DockerHub"
+           echo "Docker images pushed successfully to DockerHub"
         }
         failure {
             // Notify or handle failures
-             "Failed pushing Docker images to DockerHub"
+           //  "Failed pushing Docker images to DockerHub"
+            echo "Failed pushing Docker images to DockerHub"
 
         }
     }
