@@ -44,10 +44,12 @@ pipeline {
         success {
             // Notify or perform additional actions on success
           //  "Docker images pushed succesfully to DockerHub"
+           echo "Docker images pushed successfully to DockerHub"
         }
         failure {
             // Notify or handle failures
            //  "Failed pushing Docker images to DockerHub"
+            echo "Failed pushing Docker images to DockerHub"
 
         }
     }
