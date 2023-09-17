@@ -11,7 +11,6 @@ pipeline {
         stage('Build and Package') {
             steps {
                 sh 'mvnw clean install -DskipTests'
-                sh 'docker compose up –build'
 
             }
         }
@@ -19,17 +18,20 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    def image = docker.build('employee-service:priyankadevaraj/jenkins-employee-service:latest', '.')
-                    image.inside {
-                        sh 'echo "Running inside Docker container"'
-                    }
+                    sh 'docker compose up –build'
+                    // def image = docker.build('employee-service:priyankadevaraj/jenkins-employee-service:latest', '.')
+                    // image.inside {
+                   // sh 'echo "Running inside Docker container"'
+                    // }
                 }
             }
         }
         
         stage('Run Docker Container') {
             steps {
-                sh 'docker run -d -p 8080:8080 employee-service:priyankadevaraj/jenkins-employee-service:latest'
+               // echo "Running inside Docker container"
+               // sh 'docker run -d -p 8080:8080 employee-service:priyankadevaraj/jenkins-employee-service:latest'
+               sh 'Minikube start'
             }
         }
     }
