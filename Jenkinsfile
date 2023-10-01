@@ -1,47 +1,32 @@
 pipeline {
     agent any
-    
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-        
-        stage('Build and Package') {
-            steps {
-                sh 'mvnw clean install -DskipTests'
 
-            }
-        }
-        
-        stage('Build Docker Image') {
+    tools {
+        // Install the Maven version configured as "M3" and add it to the path.
+        maven "M3"
+    }
+
+    stages {
+        stage('Build') {
             steps {
-                script {
-                    sh 'docker compose up –build'
-                    // def image = docker.build('employee-service:priyankadevaraj/jenkins-employee-service:latest', '.')
-                    // image.inside {
-                   // sh 'echo "Running inside Docker container"'
-                    // }
+                // Get some code from a GitHub repository
+                git 'https://github.com/Priyankadevaraj92/JenkinsPractice.git'
+
+                // Run Maven on a Unix agent.
+             //   sh "mvn -Dmaven.test.failure.ignore=true clean package"
+
+                // To run Maven on a Windows agent, use
+                 bat "mvn -Dmaven.test.failure.ignore=true clean package"
+            }
+
+            post {
+                // If Maven was able to run the tests, even if some of the test
+                // failed, record the test results and archive the jar file.
+                success {
+                    junit '**/target/surefire-reports/TEST-*.xml'
+                    archiveArtifacts 'target/*.jar'
                 }
             }
-        }
-        
-        stage('Run Docker Container') {
-            steps {
-               // echo "Running inside Docker container"
-               // sh 'docker run -d -p 8080:8080 employee-service:priyankadevaraj/jenkins-employee-service:latest'
-               sh 'Minikube start'
-            }
-        }
-    }
-    
-    post {
-        success {
-            echo "Docker images pushed successfully to DockerHub"
-        }
-        failure {
-            echo "Failed pushing Docker images to DockerHub"
         }
     }
 }
